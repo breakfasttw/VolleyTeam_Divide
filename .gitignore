@@ -1,0 +1,6 @@
+env
+.env
+ignore/
+reference/
+ai_work/
+AGENTS.md
