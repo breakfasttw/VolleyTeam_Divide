@@ -7,6 +7,7 @@
     const GROUP_LABELS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     const SAVE_DELAY = 180;
     let saveTimer = null;
+    let selectedRoundNumber = null;
 
     const elements = {
         setupTab: document.getElementById("setup-tab"),
@@ -33,7 +34,8 @@
         resultSummary: document.getElementById("result-summary"),
         resultEventName: document.getElementById("result-event-name"),
         resultContent: document.getElementById("result-content"),
-        exportImageButton: document.getElementById("export-image-button"),
+        splitNotation: document.getElementById("split-notation"),
+        exportImageButton: document.getElementById("export-image-button"), // 新增此行
     };
 
     let state = loadInitialState();
@@ -148,6 +150,7 @@
         elements.start.addEventListener("click", startScheduling);
         elements.copyButton.addEventListener("click", copyCurrentInfo);
         elements.importButton.addEventListener("click", beginImport);
+        // 新增以下事件監聽
         if (elements.exportImageButton) {
             elements.exportImageButton.addEventListener(
                 "click",
@@ -216,6 +219,7 @@
 
         if (hasAnyNames()) {
             const choice = await ui.showModal({
+                // icon: "↻",
                 title: "重新分組",
                 message: "是否要保留成員名單，\n由系統依原輸入順序重新分組？",
                 actions: [
@@ -319,6 +323,7 @@
         }
 
         const choice = await ui.showModal({
+            // icon: "⌫",
             title: "刪除小組",
             message: `確定要刪除以下成員的小組嗎？\n${groupLabel(groupIndex)} 組\n${names.length ? names.join("、") : "（尚無成員）"}`,
             actions: [
@@ -354,6 +359,7 @@
 
     function showMinimumCapacityWarning() {
         return ui.showModal({
+            // icon: "!",
             title: "無法刪除",
             message: "最少須保留 6 個成員輸入欄位！",
             actions: [
@@ -508,7 +514,7 @@
         const members = getNamedMembers();
         const women = members.filter((member) => member.gender === "F").length;
         const men = members.length - women;
-        elements.participantSummary.textContent = `共 ${members.length} 人，${women} 女 ${men} 男`;
+        elements.participantSummary.textContent = `共 ${members.length} 人參與，${women} 女 ${men} 男`;
     }
 
     function getNamedMembers() {
@@ -541,6 +547,7 @@
         const memberCount = getNamedMembers().length;
         if (memberCount < 6) {
             await ui.showModal({
+                // icon: "〒﹏〒",
                 title: "人數過少無法分隊",
                 message: "再多揪點人！\n至少須滿 6 人",
                 actions: [
@@ -571,6 +578,7 @@
                 })
                 .join("\n");
             const choice = await ui.showModal({
+                // icon: "!",
                 title: "發現同名成員",
                 message: `以下姓名與性別重複：\n${duplicateText}\n\n系統會自動加上組別或流水號以便辨識，是否仍要分隊？`,
                 actions: [
@@ -605,6 +613,7 @@
                 groups: state.groups,
             });
             state.resultStale = false;
+            selectedRoundNumber = null;
             storage.save(state);
             updateResultAvailability();
             renderResult();
@@ -614,6 +623,7 @@
         } catch (error) {
             ui.hideBusy();
             await ui.showModal({
+                // icon: "!",
                 title: "暫時無法完成分隊",
                 message:
                     error && error.message
@@ -630,28 +640,76 @@
         }
     }
 
-    // 所有組別模式皆統一使用相同表格呈現
     function renderResult() {
         const result = state.result;
         if (!result) return;
-
+        selectedRoundNumber = null;
         const women = result.players.filter(
             (player) => player.gender === "F",
         ).length;
         const men = result.players.length - women;
-        elements.resultSummary.textContent = `共 ${result.players.length} 人，${women} 女 ${men} 男`;
+        elements.resultSummary.textContent = `共 ${result.players.length} 人參與，${women} 女 ${men} 男`;
         elements.resultEventName.textContent =
             result.settings.eventName || "未命名場次";
         elements.staleNotice.hidden = !state.resultStale;
         elements.resultContent.replaceChildren();
+        elements.splitNotation.hidden = result.settings.groupSize === 1;
 
+        if (result.settings.groupSize === 1) renderSoloResult(result);
+        else renderGroupedResult(result);
+    }
+
+    function renderGroupedResult(result) {
+        const layout = document.createElement("div");
+        layout.className = "split-result";
+
+        const groupPane = document.createElement("section");
+        groupPane.className = "result-pane";
+        const groupTitle = document.createElement("h2");
+        groupTitle.className = "result-pane-title";
+        groupTitle.textContent = "小組名單（●男）";
+        const groupList = document.createElement("div");
+        groupList.className = "result-group-list";
+
+        result.groups.forEach((group, groupIndex) => {
+            const card = document.createElement("div");
+            card.className = "result-group-card";
+            card.dataset.groupIndex = String(groupIndex);
+            const namedMembers = result.players.filter(
+                (player) => player.groupIndex === groupIndex,
+            );
+            const heading = document.createElement("strong");
+            heading.textContent = `${groupLabel(groupIndex)} 組`;
+            if (namedMembers.length < result.settings.groupSize) {
+                const shortage = document.createElement("span");
+                shortage.className = "group-shortage";
+                shortage.textContent = "*";
+                heading.appendChild(shortage);
+            }
+            card.append(heading, document.createTextNode("｜"));
+            namedMembers.forEach((player, index) => {
+                if (index) card.appendChild(document.createTextNode("、"));
+                appendPlayerName(card, player);
+            });
+            groupList.appendChild(card);
+        });
+        groupPane.append(groupTitle, groupList);
+
+        const schedulePane = document.createElement("section");
+        schedulePane.className = "result-pane";
+        schedulePane.appendChild(createScheduleTable(result, false));
+        layout.append(groupPane, schedulePane);
+        elements.resultContent.appendChild(layout);
+    }
+
+    function renderSoloResult(result) {
         const container = document.createElement("section");
         container.className = "solo-result";
-        container.appendChild(createScheduleTable(result));
+        container.appendChild(createScheduleTable(result, true));
         elements.resultContent.appendChild(container);
     }
 
-    function createScheduleTable(result) {
+    function createScheduleTable(result, solo) {
         const table = document.createElement("table");
         table.className = "schedule-table";
         const thead = document.createElement("thead");
@@ -680,14 +738,27 @@
                 frontCell.textContent = round.frontLabel;
                 backCell.textContent = round.backLabel;
             } else {
+                row.classList.add("is-clickable");
                 frontCell.className = "front-team";
                 backCell.className = "back-team";
-                frontCell.appendChild(
-                    createTeamDisplay(round.front, result.players),
-                );
-                backCell.appendChild(
-                    createTeamDisplay(round.back, result.players),
-                );
+                if (solo) {
+                    frontCell.appendChild(
+                        createSoloTeam(round.front, result.players),
+                    );
+                    backCell.appendChild(
+                        createSoloTeam(round.back, result.players),
+                    );
+                } else {
+                    frontCell.appendChild(
+                        createGroupedTeam(round.front, round, result),
+                    );
+                    backCell.appendChild(
+                        createGroupedTeam(round.back, round, result),
+                    );
+                    row.addEventListener("click", () =>
+                        toggleRoundHighlight(round, result),
+                    );
+                }
             }
 
             row.append(numberCell, frontCell, backCell);
@@ -697,7 +768,50 @@
         return table;
     }
 
-    function createTeamDisplay(ids, players) {
+    function createGroupedTeam(ids, round, result) {
+        const wrapper = document.createElement("span");
+        const idSet = new Set(ids);
+        const playersByGroup = new Map();
+        ids.map((id) => result.players.find((player) => player.id === id))
+            .filter(Boolean)
+            .forEach((player) => {
+                if (!playersByGroup.has(player.groupIndex))
+                    playersByGroup.set(player.groupIndex, []);
+                playersByGroup.get(player.groupIndex).push(player);
+            });
+
+        Array.from(playersByGroup.entries())
+            .sort((left, right) => left[0] - right[0])
+            .forEach(([groupIndex, sidePlayers], index) => {
+                if (index) wrapper.appendChild(document.createTextNode("、"));
+                const allGroupPlayers = result.players.filter(
+                    (player) => player.groupIndex === groupIndex,
+                );
+                const isWholeGroup =
+                    allGroupPlayers.every((player) => idSet.has(player.id)) &&
+                    !round.splitGroups.includes(groupIndex);
+                const shortage =
+                    allGroupPlayers.length < result.settings.groupSize
+                        ? "*"
+                        : "";
+                const entry = document.createElement("span");
+                entry.className = "team-entry";
+                if (isWholeGroup) {
+                    entry.textContent = `${groupLabel(groupIndex)}${shortage}`;
+                } else {
+                    entry.textContent = sidePlayers
+                        .map(
+                            (player) =>
+                                `${groupLabel(groupIndex)}${shortage}·${player.displayName}`,
+                        )
+                        .join("／");
+                }
+                wrapper.appendChild(entry);
+            });
+        return wrapper;
+    }
+
+    function createSoloTeam(ids, players) {
         const wrapper = document.createElement("span");
         wrapper.className = "solo-team-lines";
         const teamPlayers = ids
@@ -728,42 +842,45 @@
         parent.appendChild(document.createTextNode(player.displayName));
         if (player.gender === "M") {
             const dot = document.createElement("span");
-            dot.className = "male-dot";
+            dot.className = "male-dot bigger-font";
             dot.textContent = "●";
             parent.appendChild(dot);
         }
     }
 
-    async function handleExportImage() {
-        if (!state.result) return;
-        const resultPage = document.querySelector(".result-page");
-        if (!resultPage) return;
+    function toggleRoundHighlight(round, result) {
+        selectedRoundNumber =
+            selectedRoundNumber === round.number ? null : round.number;
+        document.querySelectorAll(".schedule-row").forEach((row) => {
+            row.classList.toggle(
+                "is-selected",
+                Number(row.dataset.round) === selectedRoundNumber,
+            );
+        });
+        document.querySelectorAll(".result-group-card").forEach((card) => {
+            card.classList.remove("is-front", "is-back", "is-split");
+        });
+        if (selectedRoundNumber == null) return;
 
-        ui.showBusy("圖片產生中");
-        await delay(50);
+        const frontGroups = groupsForIds(round.front, result.players);
+        const backGroups = groupsForIds(round.back, result.players);
+        document.querySelectorAll(".result-group-card").forEach((card) => {
+            const groupIndex = Number(card.dataset.groupIndex);
+            const inFront = frontGroups.has(groupIndex);
+            const inBack = backGroups.has(groupIndex);
+            if (inFront && inBack) card.classList.add("is-split");
+            else if (inFront) card.classList.add("is-front");
+            else if (inBack) card.classList.add("is-back");
+        });
+    }
 
-        try {
-            const rawEventName = state.settings.eventName.trim();
-            const fileName = rawEventName
-                ? `${rawEventName}_分隊結果`
-                : "排球分隊結果";
-            await window.VolyImageExporter.exportToImage(resultPage, fileName);
-            ui.showBusyDone("已存為圖片");
-            await delay(700);
-        } catch (error) {
-            await ui.showModal({
-                title: "產生失敗",
-                message:
-                    error && error.message
-                        ? error.message
-                        : "無法順利產生圖片，請稍後再試。",
-                actions: [
-                    { label: "知道了", value: true, className: "modal-button" },
-                ],
-            });
-        } finally {
-            ui.hideBusy();
-        }
+    function groupsForIds(ids, players) {
+        const idSet = new Set(ids);
+        return new Set(
+            players
+                .filter((player) => idSet.has(player.id))
+                .map((player) => player.groupIndex),
+        );
     }
 
     async function copyCurrentInfo() {
@@ -794,6 +911,7 @@
         textarea.value = text;
         textarea.readOnly = true;
         await ui.showModal({
+            // icon: "▤",
             title: "請手動複製",
             message: "瀏覽器未允許自動複製，請長按下方內容後複製。",
             extra: textarea,
@@ -824,6 +942,7 @@
     async function beginImport() {
         if (hasAnyNames()) {
             const choice = await ui.showModal({
+                // icon: "!",
                 title: "取代現有資料",
                 message: "匯入後會取代目前的設定與成員名單，是否繼續？",
                 actions: [
@@ -871,16 +990,17 @@
         wrapper.append(textarea, pasteButton, status);
 
         const choice = await ui.showModal({
+            // icon: "↪",
             title: "匯入既有資訊",
             message: "請貼上由【複製目前資訊】產生的文字。",
             extra: wrapper,
             actions: [
+                { label: "返回", value: "cancel", className: "modal-button" },
                 {
                     label: "確定匯入",
                     value: "import",
                     className: "primary-button",
                 },
-                { label: "返回", value: "cancel", className: "modal-button" },
             ],
         });
         if (choice !== "import") return;
@@ -894,6 +1014,7 @@
                 result: null,
                 resultStale: false,
             };
+            selectedRoundNumber = null;
             syncControls();
             renderRoster();
             updateSummary();
@@ -902,6 +1023,7 @@
             ui.showToast("匯入成功！");
         } catch (_error) {
             await ui.showModal({
+                // icon: "!",
                 title: "內容不符",
                 message: "請匯入由【複製目前資訊】產生的文字。",
                 actions: [
@@ -913,6 +1035,7 @@
 
     async function confirmReset() {
         const choice = await ui.showModal({
+            // icon: "↺",
             title: "確定要重置嗎？",
             message: "所有輸入與分隊結果將被清除\n( ꒪Д꒪)ノ",
             actions: [
@@ -927,6 +1050,7 @@
         if (choice !== "reset") return;
         window.clearTimeout(saveTimer);
         state = createDefaultState();
+        selectedRoundNumber = null;
         storage.clear();
         syncControls();
         renderRoster();
@@ -972,5 +1096,36 @@
         return new Promise((resolve) =>
             window.setTimeout(resolve, milliseconds),
         );
+    }
+    async function handleExportImage() {
+        if (!state.result) return;
+        const resultPage = document.querySelector(".result-page");
+        if (!resultPage) return;
+
+        ui.showBusy("圖片產生中");
+        await delay(50);
+
+        try {
+            const rawEventName = state.settings.eventName.trim();
+            const fileName = rawEventName
+                ? `${rawEventName}_分隊結果`
+                : "排球分隊結果";
+            await window.VolyImageExporter.exportToImage(resultPage, fileName);
+            ui.showBusyDone("已存為圖片");
+            await delay(700);
+        } catch (error) {
+            await ui.showModal({
+                title: "產生失敗",
+                message:
+                    error && error.message
+                        ? error.message
+                        : "無法順利產生圖片，請稍後再試。",
+                actions: [
+                    { label: "知道了", value: true, className: "modal-button" },
+                ],
+            });
+        } finally {
+            ui.hideBusy();
+        }
     }
 })();

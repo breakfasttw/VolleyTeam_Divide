@@ -14,16 +14,16 @@
             throw new Error("找不到可截圖的結果內容");
         }
 
-        // 1. 建立離屏容器並深度複製節點
+        // 1. 建立離屏容器，將節點深度複製一份
         const clone = sourceElement.cloneNode(true);
 
-        // 移除複製節點中不需要進圖片的元素（過期通知、頂部按鈕列）
+        // 移除複製節點中不需要截進圖片的元素（如過期提示、操作按鈕）
         const staleNotice = clone.querySelector("#stale-result-notice");
         if (staleNotice) staleNotice.remove();
-        const topBar = clone.querySelector(".result-top-bar");
-        if (topBar) topBar.remove();
+        const exportBtnArea = clone.querySelector(".result-actions");
+        if (exportBtnArea) exportBtnArea.remove();
 
-        // 2. 設置固定寬度 750px，確保無論在任何螢幕輸出都清晰且排版一致
+        // 2. 設定離屏樣式：固定為適合手機與平板閱讀的 750px 寬度，並確保完整展開
         const container = document.createElement("div");
         container.style.position = "fixed";
         container.style.top = "0";
@@ -34,20 +34,29 @@
         container.style.padding = "24px";
         container.style.boxSizing = "border-box";
 
-        // 強制解開表格容器的捲軸高度限制，完整撐開長表格
-        const soloResult = clone.querySelector(".solo-result");
-        if (soloResult) {
-            soloResult.style.height = "auto";
-            soloResult.style.maxHeight = "none";
-            soloResult.style.overflow = "visible";
-            soloResult.style.border = "none";
+        // 強制解開捲軸限制，讓 1人/分組 的表格完整依內容長度撐開
+        const scrollContainers = clone.querySelectorAll(
+            ".split-result, .result-pane, .solo-result",
+        );
+        scrollContainers.forEach((el) => {
+            el.style.height = "auto";
+            el.style.maxHeight = "none";
+            el.style.overflow = "visible";
+        });
+
+        // 讓分組結果的分割比例在固定 750px 下保持最佳排版
+        const splitResult = clone.querySelector(".split-result");
+        if (splitResult) {
+            splitResult.style.display = "grid";
+            splitResult.style.gridTemplateColumns = "280px 1fr";
+            splitResult.style.gap = "16px";
         }
 
         container.appendChild(clone);
         document.body.appendChild(container);
 
         try {
-            // 3. 轉為 2x 高解析度 Canvas
+            // 3. 執行 Canvas 轉換 (scale: 2 相當於 Retina 2x 高解析度輸出)
             const canvas = await window.html2canvas(container, {
                 scale: 2,
                 useCORS: true,
@@ -56,7 +65,7 @@
                 windowWidth: 750,
             });
 
-            // 4. 觸發自動下載
+            // 4. 觸發下載
             const dataUrl = canvas.toDataURL("image/png");
             const downloadLink = document.createElement("a");
             downloadLink.href = dataUrl;
@@ -65,7 +74,7 @@
             downloadLink.click();
             downloadLink.remove();
         } finally {
-            // 5. 清除臨時離屏元素
+            // 5. 確保移除臨時 DOM
             container.remove();
         }
     }

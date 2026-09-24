@@ -12,34 +12,7 @@
             content="排球分隊器：依名單與設定產生公平、可重現的上場順序。"
         />
         <title>排球分隊器</title>
-        <!-- 瀏覽器分頁圖示 (Favicon) -->
-        <link
-            rel="icon"
-            type="image/png"
-            href="img/favicon.png?=v202605091600"
-        />
-
-        <!-- Apple 手機網頁加入主畫面圖示 -->
-        <link rel="apple-touch-icon" href="img/favicon.png?=v202605091600" />
-
-        <!-- (選用) 針對不同尺寸的 Apple 圖示設定 -->
-        <link
-            rel="apple-touch-icon"
-            sizes="152x152"
-            href="img/favicon.png?=v202605091600"
-        />
-        <link
-            rel="apple-touch-icon"
-            sizes="180x180"
-            href="img/favicon.png?=v202605091600"
-        />
-
-        <link
-            rel="icon"
-            sizes="192x192"
-            href="img/favicon.png?=v202605091600"
-        />
-        <link rel="stylesheet" href="style.css?v=202609250.45" />
+        <link rel="stylesheet" href="style.css?v=202609250302" />
     </head>
     <body>
         <div id="app" class="app-shell">
@@ -49,9 +22,8 @@
                     href="#"
                     id="brand-home"
                     aria-label="回到設定區"
+                    >v.s.</a
                 >
-                    <img src="img/favicon.png" alt="回到設定區" />
-                </a>
                 <nav class="tab-list" aria-label="主要頁籤">
                     <button
                         id="setup-tab"
@@ -280,7 +252,6 @@
                                 >
                                     開始分隊
                                 </button>
-                                <p></p>
                             </div>
                         </section>
                     </div>
@@ -300,18 +271,6 @@
                         >
                             名單或設定已變更，目前顯示的是上一次結果。請重新分隊以更新。
                         </div>
-
-                        <!-- 移至右上角的頂部操作列 -->
-                        <div class="result-top-bar">
-                            <button
-                                id="export-image-button"
-                                class="primary-button export-button"
-                                type="button"
-                            >
-                                存為圖片
-                            </button>
-                        </div>
-
                         <div class="result-meta">
                             <p id="result-summary">共 0 人參與，0 女 0 男</p>
                             <p
@@ -319,8 +278,20 @@
                                 class="result-event-name"
                             ></p>
                         </div>
-
                         <div id="result-content" class="result-content"></div>
+                        <p id="split-notation" class="split-notation" hidden>
+                            拆組時以「A·成員名」標示；同一組跨兩側時會顯示雙色。
+                        </p>
+                        <!-- 拍照按鈕 -->
+                        <div class="result-actions">
+                            <button
+                                id="export-image-button"
+                                class="primary-button"
+                                type="button"
+                            >
+                                存為圖片
+                            </button>
+                        </div>
                     </div>
                 </section>
             </main>
@@ -385,6 +356,6 @@
         <script src="scheduler.js" defer></script>
         <script src="interactions.js" defer></script>
         <script src="image-exporter.js" defer></script>
-        <script src="main.js?v=202609250.45" defer></script>
+        <script src="main.js?v=202609250302" defer></script>
     </body>
 </html>
