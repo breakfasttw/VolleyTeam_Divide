@@ -1,5 +1,5 @@
 @font-face {
-    font-family: "Iansui";
+    font-family: "Iansui", "Noto Serif TC", serif;
     src: url("../../fonts/Iansui-Regular.ttf") format("truetype");
     font-display: swap;
 }
@@ -713,8 +713,8 @@ textarea:focus-visible {
 .male-dot {
     color: var(--male);
     font-family: Arial, sans-serif;
-    font-size: 0.72em;
-    vertical-align: 0.2em;
+    font-size: 0.9rem;
+    vertical-align: 0.1em;
 }
 
 .group-shortage,
@@ -963,6 +963,13 @@ textarea:focus-visible {
     color: #a8f1d0;
     font-family: Arial, sans-serif;
     font-size: 2rem;
+}
+
+.result-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 24px;
+    padding-bottom: 20px;
 }
 
 @keyframes spin {

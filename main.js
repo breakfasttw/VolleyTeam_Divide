@@ -35,6 +35,7 @@
         resultEventName: document.getElementById("result-event-name"),
         resultContent: document.getElementById("result-content"),
         splitNotation: document.getElementById("split-notation"),
+        exportImageButton: document.getElementById("export-image-button"), // 新增此行
     };
 
     let state = loadInitialState();
@@ -149,6 +150,13 @@
         elements.start.addEventListener("click", startScheduling);
         elements.copyButton.addEventListener("click", copyCurrentInfo);
         elements.importButton.addEventListener("click", beginImport);
+        // 新增以下事件監聽
+        if (elements.exportImageButton) {
+            elements.exportImageButton.addEventListener(
+                "click",
+                handleExportImage,
+            );
+        }
     }
 
     function syncControls() {
@@ -834,7 +842,7 @@
         parent.appendChild(document.createTextNode(player.displayName));
         if (player.gender === "M") {
             const dot = document.createElement("span");
-            dot.className = "male-dot";
+            dot.className = "male-dot bigger-font";
             dot.textContent = "●";
             parent.appendChild(dot);
         }
@@ -1088,5 +1096,36 @@
         return new Promise((resolve) =>
             window.setTimeout(resolve, milliseconds),
         );
+    }
+    async function handleExportImage() {
+        if (!state.result) return;
+        const resultPage = document.querySelector(".result-page");
+        if (!resultPage) return;
+
+        ui.showBusy("圖片產生中");
+        await delay(50);
+
+        try {
+            const rawEventName = state.settings.eventName.trim();
+            const fileName = rawEventName
+                ? `${rawEventName}_分隊結果`
+                : "排球分隊結果";
+            await window.VolyImageExporter.exportToImage(resultPage, fileName);
+            ui.showBusyDone("已存為圖片");
+            await delay(700);
+        } catch (error) {
+            await ui.showModal({
+                title: "產生失敗",
+                message:
+                    error && error.message
+                        ? error.message
+                        : "無法順利產生圖片，請稍後再試。",
+                actions: [
+                    { label: "知道了", value: true, className: "modal-button" },
+                ],
+            });
+        } finally {
+            ui.hideBusy();
+        }
     }
 })();
