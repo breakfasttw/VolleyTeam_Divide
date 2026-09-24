@@ -1,0 +1,39 @@
+第一版已完成，所有異動都嚴格限制在 `ai_work` 內，`git status` 未顯示其他目錄異動。
+
+主要檔案：
+
+- [index.html](T:/Code/Practice/VolleyTeam_Divide/ai_work/Code/index.html)
+- [style.css](T:/Code/Practice/VolleyTeam_Divide/ai_work/Code/style.css)
+- [main.js](T:/Code/Practice/VolleyTeam_Divide/ai_work/Code/main.js)
+- [scheduler.js](T:/Code/Practice/VolleyTeam_Divide/ai_work/Code/scheduler.js)
+- [storage.js](T:/Code/Practice/VolleyTeam_Divide/ai_work/Code/storage.js)
+- [interactions.js](T:/Code/Practice/VolleyTeam_Divide/ai_work/Code/interactions.js)
+- [README.md](T:/Code/Practice/VolleyTeam_Divide/ai_work/Code/README.md)
+
+已實作：
+
+- 手機優先響應式版面及 Iansui 字型。
+- 1、2、3 人模式與重新分組確認。
+- 6～24 人輸入、刪除、新增及即時人數統計。
+- 同名、全半形正規化及顯示名稱後綴。
+- 確定性分隊演算法與指定最佳化優先順序。
+- 前三場「先到先打」固定文字。
+- 優先保持小組完整，必要時以 `A·成員名` 呈現拆組。
+- 前後場 Highlight；跨兩側的小組顯示雙色。
+- Local Storage 自動保存及過期結果提示。
+- JSON 文字匯入／複製與剪貼簿失敗備援。
+- 重置、刪除、人數不足、重複姓名等 Modal。
+- 左右結果視窗獨立捲動，無橫向頁面捲動設計。
+
+驗證結果：
+
+- JavaScript 語法檢查通過。
+- 儲存及匯入測試通過。
+- 6～24 人、三種模式排程測試通過。
+- DOM ID 與資源引用測試通過。
+- 24 人、6 小時壓力案例約 1 秒，24 輪上場次數差為 0。
+- 本機 HTTP 資源與字型均可正常取得。
+
+瀏覽器測試介面本次沒有可用的瀏覽器執行個體，因此尚未完成實際 iPhone 8 截圖與點擊 QA。
+
+「存為圖片」可以平順擴充：結果、人數與場名都已集中在 `.result-page`，後續只需建立展開捲動內容的輸出副本再轉成 PNG，不必修改演算法或資料格式。
