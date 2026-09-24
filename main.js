@@ -211,9 +211,9 @@
 
         if (hasAnyNames()) {
             const choice = await ui.showModal({
-                icon: "↻",
+                // icon: "↻",
                 title: "重新分組",
-                message: "是否要保留成員名單，由系統依原輸入順序重新分組？",
+                message: "是否要保留成員名單，\n由系統依原輸入順序重新分組？",
                 actions: [
                     {
                         label: "返回",
@@ -351,7 +351,7 @@
 
     function showMinimumCapacityWarning() {
         return ui.showModal({
-            icon: "!",
+            // icon: "!",
             title: "無法刪除",
             message: "最少須保留 6 個成員輸入欄位！",
             actions: [

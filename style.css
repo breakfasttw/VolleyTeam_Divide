@@ -270,7 +270,7 @@ textarea:focus-visible {
 .stepper {
     display: grid;
     grid-template-columns: 32px 48px 32px;
-    min-height: 28px;
+    min-height: 30px;
     overflow: hidden;
     border: 1px solid var(--line-strong);
     border-radius: 4px;
@@ -461,10 +461,10 @@ textarea:focus-visible {
 
 .group-card {
     display: grid;
-    grid-template-columns: 48px minmax(0, 1fr) 42px;
-    gap: 9px;
+    grid-template-columns: 36px minmax(0, 1fr) 42px;
+    gap: 8px;
     align-items: center;
-    padding: 10px;
+    padding: 12px 4px 12px 4px;
 }
 
 .group-label {
@@ -529,7 +529,7 @@ textarea:focus-visible {
     background: transparent;
     color: var(--muted);
     font-family: Arial, sans-serif;
-    font-size: 1rem;
+    font-size: 1.28rem;
 }
 
 .delete-unit:hover,
