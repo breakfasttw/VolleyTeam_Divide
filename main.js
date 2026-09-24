@@ -315,7 +315,7 @@
         }
 
         const choice = await ui.showModal({
-            icon: "⌫",
+            // icon: "⌫",
             title: "刪除小組",
             message: `確定要刪除以下成員的小組嗎？\n${groupLabel(groupIndex)} 組\n${names.length ? names.join("、") : "（尚無成員）"}`,
             actions: [
@@ -539,7 +539,7 @@
         const memberCount = getNamedMembers().length;
         if (memberCount < 6) {
             await ui.showModal({
-                icon: "〒﹏〒",
+                // icon: "〒﹏〒",
                 title: "人數過少無法分隊",
                 message: "再多揪點人！\n至少須滿 6 人",
                 actions: [
@@ -570,7 +570,7 @@
                 })
                 .join("\n");
             const choice = await ui.showModal({
-                icon: "!",
+                // icon: "!",
                 title: "發現同名成員",
                 message: `以下姓名與性別重複：\n${duplicateText}\n\n系統會自動加上組別或流水號以便辨識，是否仍要分隊？`,
                 actions: [
@@ -615,7 +615,7 @@
         } catch (error) {
             ui.hideBusy();
             await ui.showModal({
-                icon: "!",
+                // icon: "!",
                 title: "暫時無法完成分隊",
                 message:
                     error && error.message
@@ -903,7 +903,7 @@
         textarea.value = text;
         textarea.readOnly = true;
         await ui.showModal({
-            icon: "▤",
+            // icon: "▤",
             title: "請手動複製",
             message: "瀏覽器未允許自動複製，請長按下方內容後複製。",
             extra: textarea,
@@ -934,7 +934,7 @@
     async function beginImport() {
         if (hasAnyNames()) {
             const choice = await ui.showModal({
-                icon: "!",
+                // icon: "!",
                 title: "取代現有資料",
                 message: "匯入後會取代目前的設定與成員名單，是否繼續？",
                 actions: [
@@ -982,7 +982,7 @@
         wrapper.append(textarea, pasteButton, status);
 
         const choice = await ui.showModal({
-            icon: "↪",
+            // icon: "↪",
             title: "匯入既有資訊",
             message: "請貼上由【複製目前資訊】產生的文字。",
             extra: wrapper,
@@ -1015,7 +1015,7 @@
             ui.showToast("匯入成功！");
         } catch (_error) {
             await ui.showModal({
-                icon: "!",
+                // icon: "!",
                 title: "內容不符",
                 message: "請匯入由【複製目前資訊】產生的文字。",
                 actions: [
@@ -1027,7 +1027,7 @@
 
     async function confirmReset() {
         const choice = await ui.showModal({
-            icon: "↺",
+            // icon: "↺",
             title: "確定要重置嗎？",
             message: "所有輸入與分隊結果將被清除\n( ꒪Д꒪)ノ",
             actions: [
