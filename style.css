@@ -144,7 +144,7 @@ textarea:focus-visible {
     position: relative;
     min-height: 36px;
     padding: 6px 2px;
-    border: 1px solid var(--line-strong);
+    border: 0px solid var(--line-strong);
     border-bottom: 0;
     background: var(--surface-blue);
     color: var(--muted);
@@ -316,6 +316,29 @@ textarea:focus-visible {
     margin: 0;
     padding: 0;
     border: 0;
+}
+
+.setting-side-options {
+    display: grid;
+    flex: 0 0 auto;
+    gap: 12px;
+    justify-items: start;
+    align-content: start;
+}
+
+.help-button {
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+    padding: 2px 4px;
+    border: 0;
+    background: transparent;
+    color: var(--navy);
+    font-weight: 700;
+}
+
+.help-button:hover {
+    color: var(--blue);
 }
 
 .segmented-control {
