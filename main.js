@@ -654,7 +654,12 @@
             (player) => player.gender === "F",
         ).length;
         const men = result.players.length - women;
-        elements.resultSummary.textContent = `共 ${result.players.length} 人，${women} 女 ${men} 男`;
+        elements.resultSummary.replaceChildren(
+            document.createTextNode(
+                `共 ${result.players.length} 人，${women} 女 ${men} 男 `,
+            ),
+            createMaleDot(),
+        );
         elements.resultEventName.textContent =
             result.settings.eventName || "未命名場次";
         elements.staleNotice.hidden = !state.resultStale;
@@ -739,13 +744,19 @@
         return wrapper;
     }
 
+    function createMaleDot() {
+        const dot = document.createElement("span");
+        dot.className = "male-dot";
+        dot.textContent = "●";
+        dot.setAttribute("aria-hidden", "true");
+        return dot;
+    }
+
     function appendPlayerName(parent, player) {
         parent.appendChild(document.createTextNode(player.displayName));
+
         if (player.gender === "M") {
-            const dot = document.createElement("span");
-            dot.className = "male-dot";
-            dot.textContent = "●";
-            parent.appendChild(dot);
+            parent.appendChild(createMaleDot());
         }
     }
 
