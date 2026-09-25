@@ -39,7 +39,7 @@
             sizes="192x192"
             href="img/favicon.png?=v202605091600"
         />
-        <link rel="stylesheet" href="style.css?v=202609251727" />
+        <link rel="stylesheet" href="style.css?v=202609260214" />
     </head>
     <body>
         <div id="app" class="app-shell">
@@ -166,6 +166,7 @@
                                             data-group-size="1"
                                             role="radio"
                                             aria-checked="false"
+                                            class="is-selected"
                                         >
                                             1
                                         </button>
@@ -173,8 +174,7 @@
                                             type="button"
                                             data-group-size="2"
                                             role="radio"
-                                            aria-checked="true"
-                                            class="is-selected"
+                                            aria-checked="false"
                                         >
                                             2
                                         </button>
@@ -206,6 +206,18 @@
                                         <span>男生打散</span>
                                         <input
                                             id="spread-men-input"
+                                            type="checkbox"
+                                            checked
+                                        />
+                                        <span
+                                            class="toggle"
+                                            aria-hidden="true"
+                                        ></span>
+                                    </label>
+                                    <label class="toggle-field">
+                                        <span>新手打散</span>
+                                        <input
+                                            id="spread-beginners-input"
                                             type="checkbox"
                                             checked
                                         />
@@ -385,6 +397,6 @@
         <script src="scheduler.js" defer></script>
         <script src="interactions.js" defer></script>
         <script src="image-exporter.js" defer></script>
-        <script src="main.js?v=202609251727" defer></script>
+        <script src="main.js?v=202609260214" defer></script>
     </body>
 </html>

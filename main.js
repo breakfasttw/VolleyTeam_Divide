@@ -22,6 +22,7 @@
         eventName: document.getElementById("event-name-input"),
         earlyPlay: document.getElementById("early-play-input"),
         spreadMen: document.getElementById("spread-men-input"),
+        spreadBeginners: document.getElementById("spread-beginners-input"),
         groupSizeOptions: document.getElementById("group-size-options"),
         participantSummary: document.getElementById("roster-heading"),
         roster: document.getElementById("roster-container"),
@@ -67,7 +68,10 @@
         return createDefaultState();
     }
 
+    // 設定區初始狀態
     function createDefaultState() {
+        const groupSize = 1;
+
         return {
             version: storage.SCHEMA_VERSION,
             settings: {
@@ -75,9 +79,10 @@
                 duration: 3,
                 earlyPlay: true,
                 spreadMen: true,
-                groupSize: 2,
+                spreadBeginners: true,
+                groupSize,
             },
-            groups: createBlankGroups(2),
+            groups: createBlankGroups(groupSize),
             result: null,
             resultStale: false,
         };
@@ -95,7 +100,11 @@
     }
 
     function createBlankMember() {
-        return { name: "", gender: "F" };
+        return {
+            name: "",
+            gender: "F",
+            isBeginner: false,
+        };
     }
 
     function bindStaticEvents() {
@@ -139,6 +148,10 @@
             state.settings.spreadMen = elements.spreadMen.checked;
             markResultStale();
         });
+        elements.spreadBeginners.addEventListener("change", () => {
+            state.settings.spreadBeginners = elements.spreadBeginners.checked;
+            markResultStale();
+        });
         elements.eventName.addEventListener(
             "beforeinput",
             handleNameBeforeInput,
@@ -170,6 +183,9 @@
         elements.eventName.value = state.settings.eventName;
         elements.earlyPlay.checked = state.settings.earlyPlay;
         elements.spreadMen.checked = state.settings.spreadMen;
+        elements.spreadBeginners.checked = Boolean(
+            state.settings.spreadBeginners,
+        );
         elements.groupSizeOptions
             .querySelectorAll("button")
             .forEach((button) => {
@@ -266,6 +282,7 @@
             groups[groupIndex].members[memberIndex] = {
                 name: member.name,
                 gender: member.gender,
+                isBeginner: Boolean(member.isBeginner),
             };
         });
         return groups;
@@ -290,12 +307,21 @@
     }
 
     function handleRosterChange(event) {
-        const input = event.target.closest(".gender-input");
+        const input = event.target.closest(".gender-input, .is-beginner-input");
         if (!input) return;
+
         const groupIndex = Number(input.dataset.groupIndex);
         const memberIndex = Number(input.dataset.memberIndex);
-        state.groups[groupIndex].members[memberIndex].gender =
-            input.value === "M" ? "M" : "F";
+        const member = state.groups[groupIndex].members[memberIndex];
+
+        if (input.classList.contains("gender-input")) {
+            member.gender = input.value === "M" ? "M" : "F";
+        }
+
+        if (input.classList.contains("is-beginner-input")) {
+            member.isBeginner = input.checked;
+        }
+
         updateSummary();
         markResultStale();
     }
@@ -362,6 +388,7 @@
         if (!member) return;
         member.name = "";
         member.gender = "F";
+        member.isBeginner = false;
         renderRoster();
         updateSummary();
         markResultStale();
@@ -414,7 +441,7 @@
 
             const label = document.createElement("div");
             label.className = "group-label";
-            label.textContent = `${groupLabel(groupIndex)}組`;
+            label.textContent = `${groupLabel(groupIndex)}`;
 
             const memberList = document.createElement("div");
             memberList.className = "member-list";
@@ -485,7 +512,24 @@
             createGenderChoice("M", "男", member, groupIndex, memberIndex),
         );
 
-        row.append(nameInput, genders);
+        const options = document.createElement("div");
+        options.className = "member-options";
+
+        const beginnerChoice = document.createElement("label");
+        beginnerChoice.className = "beginner-choice";
+
+        const beginnerInput = document.createElement("input");
+        beginnerInput.type = "checkbox";
+        beginnerInput.className = "is-beginner-input";
+        beginnerInput.checked = Boolean(member.isBeginner);
+        beginnerInput.dataset.groupIndex = String(groupIndex);
+        beginnerInput.dataset.memberIndex = String(memberIndex);
+        beginnerInput.setAttribute("aria-label", "是否為新手");
+
+        beginnerChoice.append(beginnerInput, document.createTextNode("新"));
+
+        options.append(genders, beginnerChoice);
+        row.append(nameInput, options);
         return row;
     }
 
@@ -533,6 +577,7 @@
             .map((member) => ({
                 name: member.name.trim(),
                 gender: member.gender === "M" ? "M" : "F",
+                isBeginner: Boolean(member.isBeginner),
             }));
     }
 
@@ -755,7 +800,12 @@
     function appendPlayerName(parent, player) {
         parent.appendChild(document.createTextNode(player.displayName));
 
+        if (player.isBeginner) {
+            parent.appendChild(document.createTextNode("*"));
+        }
+
         if (player.gender === "M") {
+            parent.appendChild(document.createTextNode(""));
             parent.appendChild(createMaleDot());
         }
     }

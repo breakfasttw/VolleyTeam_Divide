@@ -15,7 +15,15 @@
             if (!raw) return null;
             const parsed = JSON.parse(raw);
             if (!isStoredState(parsed)) return null;
-            return parsed;
+
+            return {
+                ...parsed,
+                settings: sanitizeSettings(parsed.settings),
+                groups: sanitizeGroups(
+                    parsed.groups,
+                    Number(parsed.settings.groupSize),
+                ),
+            };
         } catch (_error) {
             return null;
         }
@@ -106,7 +114,9 @@
             Math.abs(duration * 2 - Math.round(duration * 2)) < 0.0001 &&
             [1, 2, 3].includes(groupSize) &&
             typeof value.earlyPlay === "boolean" &&
-            typeof value.spreadMen === "boolean"
+            typeof value.spreadMen === "boolean" &&
+            (typeof value.spreadBeginners === "undefined" ||
+                typeof value.spreadBeginners === "boolean")
         );
     }
 
@@ -144,7 +154,9 @@
                     member &&
                     typeof member.name === "string" &&
                     isValidMemberName(member.name) &&
-                    ["F", "M"].includes(member.gender),
+                    ["F", "M"].includes(member.gender) &&
+                    (typeof member.isBeginner === "undefined" ||
+                        typeof member.isBeginner === "boolean"),
             );
         });
     }
@@ -158,6 +170,7 @@
             ),
             earlyPlay: Boolean(settings.earlyPlay),
             spreadMen: Boolean(settings.spreadMen),
+            spreadBeginners: Boolean(settings.spreadBeginners),
             groupSize: Number(settings.groupSize),
         };
     }
@@ -167,6 +180,7 @@
             members: group.members.slice(0, groupSize).map((member) => ({
                 name: String(member.name).trim(),
                 gender: member.gender === "M" ? "M" : "F",
+                isBeginner: Boolean(member.isBeginner),
             })),
         }));
     }

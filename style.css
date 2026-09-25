@@ -469,15 +469,15 @@ textarea:focus-visible {
 
 .group-card {
     display: grid;
-    grid-template-columns: 36px minmax(0, 1fr) 42px;
-    gap: 8px;
+    grid-template-columns: 28px minmax(0, 1fr) 36px;
+    gap: 6px;
     align-items: center;
-    padding: 12px 4px 12px 4px;
+    padding: 8px 4px 8px 4px;
 }
 
 .group-label {
     color: var(--navy-dark);
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-weight: 800;
     text-align: center;
 }
@@ -509,6 +509,29 @@ textarea:focus-visible {
     border: 0;
     margin: 0;
     padding: 0;
+}
+
+.member-options {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    min-width: 0;
+}
+
+.beginner-choice {
+    display: inline-flex;
+    gap: 4px;
+    align-items: center;
+    color: var(--navy-dark);
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.beginner-choice input {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    accent-color: var(--navy);
 }
 
 .gender-choice {
