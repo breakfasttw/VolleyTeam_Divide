@@ -11,6 +11,7 @@
     const elements = {
         setupTab: document.getElementById("setup-tab"),
         resultTab: document.getElementById("result-tab"),
+        helpButton: document.getElementById("help-button"),
         resultStaleDot: document.getElementById("result-stale-dot"),
         resetButton: document.getElementById("reset-button"),
         brandHome: document.getElementById("brand-home"),
@@ -156,6 +157,7 @@
             "beforeinput",
             handleNameBeforeInput,
         );
+        elements.helpButton.addEventListener("click", showHelp);
 
         elements.roster.addEventListener("beforeinput", handleNameBeforeInput);
         elements.groupSizeOptions.addEventListener(
@@ -176,6 +178,73 @@
                 handleExportImage,
             );
         }
+    }
+
+    function showHelp() {
+        const helpContent = document.createElement("div");
+        helpContent.className = "help-content";
+
+        const sections = [
+            {
+                title: "幾人一組：",
+                items: [
+                    "1 人 1 組：不特別綁定人員",
+                    "2 & 3 人一組：系統會盡量綁定同小組的人 (有缺人時仍可能拆散)",
+                ],
+            },
+            {
+                title: "先到先打：",
+                items: ["賽程表上前三場不分隊，採先到先打制"],
+            },
+            {
+                title: "男生打散：",
+                items: ["系統會盡量平均單場次兩隊的男生數量"],
+            },
+            {
+                title: "新手打散：",
+                items: ["系統會盡量平均單場次兩隊的新手數量"],
+            },
+            {
+                title: "資料儲存說明：",
+                items: [
+                    "手機或電腦每次開啟時，會自動儲存已填寫資料",
+                    "若採無痕模式或清除 cookie 時，則資料會重置",
+                    "建議輸入完可先【複製目前資料】，將文字存起來",
+                    "後續可隨時【匯入既有資料】繼續編輯",
+                ],
+            },
+        ];
+
+        sections.forEach(({ title, items }) => {
+            const section = document.createElement("section");
+            section.className = "help-section";
+
+            const heading = document.createElement("h3");
+            heading.textContent = title;
+
+            const list = document.createElement("ul");
+            items.forEach((text) => {
+                const item = document.createElement("li");
+                item.textContent = text;
+                list.appendChild(item);
+            });
+
+            section.append(heading, list);
+            helpContent.appendChild(section);
+        });
+
+        ui.showModal({
+            title: "操作說明",
+            message: "",
+            extra: helpContent,
+            actions: [
+                {
+                    label: "知道了",
+                    value: true,
+                    className: "modal-button",
+                },
+            ],
+        });
     }
 
     function syncControls() {

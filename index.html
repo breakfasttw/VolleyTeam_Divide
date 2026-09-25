@@ -151,43 +151,55 @@
                             </div>
 
                             <div class="setting-row setting-row-secondary">
-                                <fieldset class="group-size-field">
-                                    <legend class="field-label">
-                                        幾人一組
-                                    </legend>
-                                    <div
-                                        id="group-size-options"
-                                        class="segmented-control"
-                                        role="radiogroup"
-                                        aria-label="幾人一組"
+                                <div class="setting-side-options">
+                                    <fieldset class="group-size-field">
+                                        <legend class="field-label">
+                                            幾人一組
+                                        </legend>
+                                        <div
+                                            id="group-size-options"
+                                            class="segmented-control"
+                                            role="radiogroup"
+                                            aria-label="幾人一組"
+                                        >
+                                            <button
+                                                type="button"
+                                                data-group-size="1"
+                                                role="radio"
+                                                aria-checked="false"
+                                                class="is-selected"
+                                            >
+                                                1
+                                            </button>
+                                            <button
+                                                type="button"
+                                                data-group-size="2"
+                                                role="radio"
+                                                aria-checked="false"
+                                            >
+                                                2
+                                            </button>
+                                            <button
+                                                type="button"
+                                                data-group-size="3"
+                                                role="radio"
+                                                aria-checked="false"
+                                            >
+                                                3
+                                            </button>
+                                        </div>
+                                    </fieldset>
+
+                                    <button
+                                        id="help-button"
+                                        class="help-button"
+                                        type="button"
+                                        aria-label="操作說明"
                                     >
-                                        <button
-                                            type="button"
-                                            data-group-size="1"
-                                            role="radio"
-                                            aria-checked="false"
-                                            class="is-selected"
-                                        >
-                                            1
-                                        </button>
-                                        <button
-                                            type="button"
-                                            data-group-size="2"
-                                            role="radio"
-                                            aria-checked="false"
-                                        >
-                                            2
-                                        </button>
-                                        <button
-                                            type="button"
-                                            data-group-size="3"
-                                            role="radio"
-                                            aria-checked="false"
-                                        >
-                                            3
-                                        </button>
-                                    </div>
-                                </fieldset>
+                                        <span aria-hidden="true">ℹ️</span>
+                                        說明
+                                    </button>
+                                </div>
 
                                 <div class="toggle-fields">
                                     <label class="toggle-field">
