@@ -116,11 +116,14 @@
         );
         elements.duration.addEventListener("change", commitDuration);
         elements.eventName.addEventListener("input", () => {
-            elements.eventName.value = truncateGraphemes(
-                elements.eventName.value,
-                20,
-            );
-            state.settings.eventName = elements.eventName.value;
+            const limit = getEventNameLimit(elements.eventName.value);
+            const value = truncateGraphemes(elements.eventName.value, limit);
+
+            if (elements.eventName.value !== value) {
+                elements.eventName.value = value;
+            }
+
+            state.settings.eventName = value;
             markResultStale();
         });
         elements.eventName.addEventListener("blur", () => {
@@ -136,6 +139,12 @@
             state.settings.spreadMen = elements.spreadMen.checked;
             markResultStale();
         });
+        elements.eventName.addEventListener(
+            "beforeinput",
+            handleNameBeforeInput,
+        );
+
+        elements.roster.addEventListener("beforeinput", handleNameBeforeInput);
         elements.groupSizeOptions.addEventListener(
             "click",
             handleGroupSizeClick,
@@ -265,10 +274,16 @@
     function handleRosterInput(event) {
         const input = event.target.closest(".member-name-input");
         if (!input) return;
+
         const groupIndex = Number(input.dataset.groupIndex);
         const memberIndex = Number(input.dataset.memberIndex);
-        const value = truncateGraphemes(input.value, 6);
-        if (input.value !== value) input.value = value;
+        const limit = getMemberNameLimit(input.value);
+        const value = truncateGraphemes(input.value, limit);
+
+        if (input.value !== value) {
+            input.value = value;
+        }
+
         state.groups[groupIndex].members[memberIndex].name = value;
         updateSummary();
         markResultStale();
@@ -449,7 +464,7 @@
         nameInput.value = member.name;
         nameInput.placeholder = `player${solo ? groupIndex + 1 : memberIndex + 1}`;
         nameInput.autocomplete = "off";
-        nameInput.maxLength = 12;
+        nameInput.maxLength = 10;
         nameInput.dataset.groupIndex = String(groupIndex);
         nameInput.dataset.memberIndex = String(memberIndex);
         nameInput.setAttribute(
@@ -952,6 +967,64 @@
     function scheduleSave() {
         window.clearTimeout(saveTimer);
         saveTimer = window.setTimeout(() => storage.save(state), SAVE_DELAY);
+    }
+    function handleNameBeforeInput(event) {
+        const input = event.target.closest(
+            ".member-name-input, #event-name-input",
+        );
+
+        if (!input || !event.inputType.startsWith("insert")) {
+            return;
+        }
+
+        const isMemberInput = input.classList.contains("member-name-input");
+        const limit = isMemberInput
+            ? getMemberNameLimit(input.value)
+            : getEventNameLimit(input.value);
+
+        const hasSelection = input.selectionStart !== input.selectionEnd;
+
+        if (!hasSelection && countGraphemes(input.value) >= limit) {
+            event.preventDefault();
+            ui.showToast("達字數上限", 2000);
+        }
+    }
+
+    function countGraphemes(value) {
+        const text = String(value || "");
+
+        if (typeof Intl !== "undefined" && Intl.Segmenter) {
+            return Array.from(
+                new Intl.Segmenter("zh-Hant", {
+                    granularity: "grapheme",
+                }).segment(text),
+            ).length;
+        }
+
+        return Array.from(text).length;
+    }
+
+    function isPureAlphaNumeric(value) {
+        return /^[A-Za-z0-9]+$/.test(String(value || ""));
+    }
+
+    function getMemberNameLimit(value) {
+        return isPureAlphaNumeric(value) ? 10 : 7;
+    }
+
+    function getEventNameLimit(value) {
+        return isPureAlphaNumeric(value) ? 16 : 12;
+    }
+
+    function showLimitToast(input, limit) {
+        if (countGraphemes(input.value) >= limit) {
+            if (input.dataset.limitNotified !== "true") {
+                ui.showToast("達字數上限", 2000);
+                input.dataset.limitNotified = "true";
+            }
+        } else {
+            input.dataset.limitNotified = "false";
+        }
     }
 
     function truncateGraphemes(value, maximum) {
