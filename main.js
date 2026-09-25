@@ -237,13 +237,7 @@
             title: "操作說明",
             message: "",
             extra: helpContent,
-            actions: [
-                {
-                    label: "知道了",
-                    value: true,
-                    className: "modal-button",
-                },
-            ],
+            actions: [],
         });
     }
 

@@ -932,6 +932,10 @@ textarea:focus-visible {
     margin: 22px auto 0;
 }
 
+.modal-actions:empty {
+    display: none;
+}
+
 .import-textarea {
     min-height: 150px;
     padding: 10px;
