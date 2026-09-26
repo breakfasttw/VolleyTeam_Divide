@@ -110,11 +110,11 @@
         const rounds = [];
 
         if (placeholderRounds >= 1)
-            rounds.push(makePlaceholder(1, "先到先打", "先到先打"));
+            rounds.push(makePlaceholder(1, "先到先打 (15分)", "先到先打"));
         if (placeholderRounds >= 2)
-            rounds.push(makePlaceholder(2, "場1勝", "場1休"));
+            rounds.push(makePlaceholder(2, "場1勝 (15分)", "場1休"));
         if (placeholderRounds >= 3)
-            rounds.push(makePlaceholder(3, "場1敗", "場1勝"));
+            rounds.push(makePlaceholder(3, "場1敗 (15分)", "場1勝"));
 
         const stats = createStats(players);
         const groupedCandidates =
