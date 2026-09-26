@@ -39,7 +39,7 @@
             sizes="192x192"
             href="img/favicon.png?=v202605091600"
         />
-        <link rel="stylesheet" href="style.css?v=202609261205" />
+        <link rel="stylesheet" href="style.css?v=202609260310" />
     </head>
     <body>
         <div id="app" class="app-shell">
@@ -327,13 +327,43 @@
 
                         <!-- 移至右上角的頂部操作列 -->
                         <div class="result-top-bar">
-                            <button
-                                id="export-image-button"
-                                class="primary-button export-button"
-                                type="button"
-                            >
-                                存為圖片
-                            </button>
+                            <div class="result-export-group">
+                                <button
+                                    id="export-image-button"
+                                    class="primary-button export-button"
+                                    type="button"
+                                >
+                                    存為圖片
+                                </button>
+                            </div>
+
+                            <div class="result-display-controls">
+                                <label class="toggle-field">
+                                    <span>標註男</span>
+                                    <input
+                                        id="show-male-marks-input"
+                                        type="checkbox"
+                                        checked
+                                    />
+                                    <span
+                                        class="toggle"
+                                        aria-hidden="true"
+                                    ></span>
+                                </label>
+
+                                <label class="toggle-field">
+                                    <span>標註新手</span>
+                                    <input
+                                        id="show-beginner-marks-input"
+                                        type="checkbox"
+                                        checked
+                                    />
+                                    <span
+                                        class="toggle"
+                                        aria-hidden="true"
+                                    ></span>
+                                </label>
+                            </div>
                         </div>
 
                         <div class="result-meta">
@@ -410,6 +440,6 @@
         <script src="scheduler.js" defer></script>
         <script src="interactions.js" defer></script>
         <script src="image-exporter.js" defer></script>
-        <script src="main.js?v=202609261205" defer></script>
+        <script src="main.js?v=202609260310" defer></script>
     </body>
 </html>

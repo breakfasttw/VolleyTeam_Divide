@@ -103,8 +103,10 @@
 
     function isSettings(value) {
         if (!value || typeof value !== "object") return false;
+
         const duration = Number(value.duration);
         const groupSize = Number(value.groupSize);
+
         return (
             typeof value.eventName === "string" &&
             isValidEventName(value.eventName) &&
@@ -115,8 +117,10 @@
             [1, 2, 3].includes(groupSize) &&
             typeof value.earlyPlay === "boolean" &&
             typeof value.spreadMen === "boolean" &&
-            (typeof value.spreadBeginners === "undefined" ||
-                typeof value.spreadBeginners === "boolean")
+            (typeof value.showMaleMarks === "undefined" ||
+                typeof value.showMaleMarks === "boolean") &&
+            (typeof value.showBeginnerMarks === "undefined" ||
+                typeof value.showBeginnerMarks === "boolean")
         );
     }
 
@@ -171,6 +175,8 @@
             earlyPlay: Boolean(settings.earlyPlay),
             spreadMen: Boolean(settings.spreadMen),
             spreadBeginners: Boolean(settings.spreadBeginners),
+            showMaleMarks: settings.showMaleMarks !== false,
+            showBeginnerMarks: settings.showBeginnerMarks !== false,
             groupSize: Number(settings.groupSize),
         };
     }

@@ -1033,8 +1033,49 @@ textarea:focus-visible {
 /* 結果頁頂部操作列（靠右對齊） */
 .result-top-bar {
     display: flex;
-    justify-content: flex-start;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
     margin-bottom: 4px;
+}
+
+.result-export-group {
+    flex: 0 0 auto;
+}
+
+.result-display-controls {
+    --result-mark-font-size: 0.85rem;
+    --result-mark-switch-width: 32px;
+    --result-mark-switch-height: 18px;
+    --result-mark-knob-size: 12px;
+    --result-mark-knob-shift: 14px;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 16px;
+}
+
+.result-display-controls .toggle-field {
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+    font-size: var(--result-mark-font-size);
+    white-space: nowrap;
+}
+
+.result-display-controls .toggle {
+    width: var(--result-mark-switch-width);
+    height: var(--result-mark-switch-height);
+}
+
+.result-display-controls .toggle::after {
+    width: var(--result-mark-knob-size);
+    height: var(--result-mark-knob-size);
+}
+
+.result-display-controls .toggle-field input:checked + .toggle::after {
+    transform: translateX(var(--result-mark-knob-shift));
 }
 
 .export-button {

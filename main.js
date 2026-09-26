@@ -36,6 +36,8 @@
         resultEventName: document.getElementById("result-event-name"),
         resultContent: document.getElementById("result-content"),
         exportImageButton: document.getElementById("export-image-button"),
+        showMaleMarks: document.getElementById("show-male-marks-input"),
+        showBeginnerMarks: document.getElementById("show-beginner-marks-input"),
     };
 
     let state = loadInitialState();
@@ -44,6 +46,7 @@
 
     function init() {
         bindStaticEvents();
+        bindResultMarkControls();
         syncControls();
         renderRoster();
         updateSummary();
@@ -62,10 +65,21 @@
 
     function loadInitialState() {
         const saved = storage.load();
+
         if (saved) {
             saved.resultStale = Boolean(saved.resultStale);
+
+            if (typeof saved.settings.showMaleMarks !== "boolean") {
+                saved.settings.showMaleMarks = true;
+            }
+
+            if (typeof saved.settings.showBeginnerMarks !== "boolean") {
+                saved.settings.showBeginnerMarks = true;
+            }
+
             return saved;
         }
+
         return createDefaultState();
     }
 
@@ -81,6 +95,8 @@
                 earlyPlay: true,
                 spreadMen: true,
                 spreadBeginners: true,
+                showMaleMarks: true,
+                showBeginnerMarks: true,
                 groupSize,
             },
             groups: createBlankGroups(groupSize),
@@ -179,6 +195,20 @@
             );
         }
     }
+    function bindResultMarkControls() {
+        elements.showMaleMarks.addEventListener("change", () => {
+            state.settings.showMaleMarks = elements.showMaleMarks.checked;
+            storage.save(state);
+            renderResult();
+        });
+
+        elements.showBeginnerMarks.addEventListener("change", () => {
+            state.settings.showBeginnerMarks =
+                elements.showBeginnerMarks.checked;
+            storage.save(state);
+            renderResult();
+        });
+    }
 
     function showHelp() {
         const helpContent = document.createElement("div");
@@ -249,6 +279,10 @@
         elements.spreadBeginners.checked = Boolean(
             state.settings.spreadBeginners,
         );
+        elements.showMaleMarks.checked = state.settings.showMaleMarks !== false;
+        elements.showBeginnerMarks.checked =
+            state.settings.showBeginnerMarks !== false;
+
         elements.groupSizeOptions
             .querySelectorAll("button")
             .forEach((button) => {
@@ -762,12 +796,17 @@
             (player) => player.gender === "F",
         ).length;
         const men = result.players.length - women;
-        elements.resultSummary.replaceChildren(
+        const summaryNodes = [
             document.createTextNode(
                 `共 ${result.players.length} 人，${women} 女 ${men} 男 `,
             ),
-            createMaleDot(),
-        );
+        ];
+
+        if (state.settings.showMaleMarks !== false) {
+            summaryNodes.push(createMaleDot());
+        }
+
+        elements.resultSummary.replaceChildren(...summaryNodes);
         elements.resultEventName.textContent =
             result.settings.eventName || "未命名場次";
         elements.staleNotice.hidden = !state.resultStale;
@@ -778,7 +817,6 @@
         container.appendChild(createScheduleTable(result));
         elements.resultContent.appendChild(container);
     }
-
     function createScheduleTable(result) {
         const table = document.createElement("table");
         table.className = "schedule-table";
@@ -863,12 +901,11 @@
     function appendPlayerName(parent, player) {
         parent.appendChild(document.createTextNode(player.displayName));
 
-        if (player.isBeginner) {
+        if (player.isBeginner && state.settings.showBeginnerMarks !== false) {
             parent.appendChild(document.createTextNode("*"));
         }
 
-        if (player.gender === "M") {
-            parent.appendChild(document.createTextNode(""));
+        if (player.gender === "M" && state.settings.showMaleMarks !== false) {
             parent.appendChild(createMaleDot());
         }
     }
