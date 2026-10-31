@@ -318,6 +318,25 @@ textarea:focus-visible {
     border: 0;
 }
 
+.minute-per-course-field {
+    display: grid;
+    width: 100%;
+    gap: 6px;
+    align-items: start;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.minute-per-course-field .field-label {
+    white-space: normal;
+}
+
+.minute-per-course-options {
+    grid-template-columns: repeat(4, 42px);
+}
+
 .setting-side-options {
     display: grid;
     flex: 0 0 auto;
@@ -347,6 +366,11 @@ textarea:focus-visible {
     overflow: hidden;
     border: 1px solid var(--line-strong);
     border-radius: 4px;
+}
+
+.segmented-control.minute-per-course-options {
+    width: 100%;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
 .segmented-control button {
@@ -649,7 +673,7 @@ textarea:focus-visible {
 }
 
 .result-page {
-    padding-top: 32px;
+    padding-top: 48px;
 }
 
 .stale-result-notice {
@@ -812,6 +836,12 @@ textarea:focus-visible {
 .schedule-table td {
     height: 64px;
     padding: 7px 3px;
+}
+
+.schedule-row-placeholder td {
+    height: 32px;
+    padding-top: 3px;
+    padding-bottom: 3px;
 }
 
 .schedule-row {
