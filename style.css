@@ -330,7 +330,7 @@ textarea:focus-visible {
 }
 
 .minute-per-course-field .field-label {
-    white-space: normal;
+    white-space: nowrap;
 }
 
 .minute-per-course-options {
