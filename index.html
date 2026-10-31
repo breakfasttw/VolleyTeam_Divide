@@ -102,7 +102,7 @@
                                     class="setting-field duration-field"
                                     for="duration-input"
                                 >
-                                    <span class="field-label">時數</span>
+                                    <span class="field-label">總時數</span>
                                     <span class="stepper">
                                         <button
                                             id="duration-minus"
@@ -148,6 +148,65 @@
                                         autocomplete="off"
                                     />
                                 </label>
+                            </div>
+
+                            <div
+                                class="setting-row setting-row-minute-per-course"
+                            >
+                                <fieldset class="minute-per-course-field">
+                                    <legend class="field-label">
+                                        每場平均耗時(min)
+                                    </legend>
+                                    <div
+                                        id="minute-per-course-options"
+                                        class="segmented-control minute-per-course-options"
+                                        role="radiogroup"
+                                        aria-label="每場平均耗時（分鐘）"
+                                    >
+                                        <button
+                                            type="button"
+                                            data-minute-per-course="10"
+                                            role="radio"
+                                            aria-checked="true"
+                                            class="is-selected"
+                                        >
+                                            10
+                                        </button>
+                                        <button
+                                            type="button"
+                                            data-minute-per-course="15"
+                                            role="radio"
+                                            aria-checked="true"
+                                            class="is-selected"
+                                        >
+                                            15
+                                        </button>
+                                        <button
+                                            type="button"
+                                            data-minute-per-course="20"
+                                            role="radio"
+                                            aria-checked="false"
+                                        >
+                                            20
+                                        </button>
+                                        <button
+                                            type="button"
+                                            data-minute-per-course="25"
+                                            role="radio"
+                                            aria-checked="false"
+                                        >
+                                            25
+                                        </button>
+                                        <button
+                                            type="button"
+                                            data-minute-per-course="30"
+                                            role="radio"
+                                            aria-checked="false"
+                                        >
+                                            30
+                                        </button>
+                                    </div>
+                                </fieldset>
                             </div>
 
                             <div class="setting-row setting-row-secondary">
@@ -327,16 +386,6 @@
 
                         <!-- 移至右上角的頂部操作列 -->
                         <div class="result-top-bar">
-                            <div class="result-export-group">
-                                <button
-                                    id="export-image-button"
-                                    class="primary-button export-button"
-                                    type="button"
-                                >
-                                    存為圖片
-                                </button>
-                            </div>
-
                             <div class="result-display-controls">
                                 <label class="toggle-field">
                                     <span>標註男</span>
@@ -352,7 +401,7 @@
                                 </label>
 
                                 <label class="toggle-field">
-                                    <span>標註新手</span>
+                                    <span>標新手</span>
                                     <input
                                         id="show-beginner-marks-input"
                                         type="checkbox"
@@ -363,6 +412,16 @@
                                         aria-hidden="true"
                                     ></span>
                                 </label>
+                            </div>
+
+                            <div class="result-export-group">
+                                <button
+                                    id="export-image-button"
+                                    class="primary-button export-button"
+                                    type="button"
+                                >
+                                    存為圖片 💾
+                                </button>
                             </div>
                         </div>
 
