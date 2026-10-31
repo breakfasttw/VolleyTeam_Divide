@@ -103,7 +103,10 @@
         const players = buildPlayers(input.groups, groupSize);
         if (players.length < 6) throw new Error("至少需要 6 位成員");
 
-        const totalRounds = Math.round(Number(input.settings.duration) * 4) + 1;
+        const durationMinutes = Number(input.settings.duration) * 60;
+        const minutePerCourse = Number(input.settings.minutePerCourse ?? 15);
+        const totalRounds = Math.ceil(durationMinutes / minutePerCourse);
+
         const placeholderRounds = input.settings.earlyPlay
             ? Math.min(3, totalRounds)
             : 0;

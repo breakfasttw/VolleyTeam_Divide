@@ -105,6 +105,10 @@
         if (!value || typeof value !== "object") return false;
 
         const duration = Number(value.duration);
+        const minutePerCourse =
+            value.minutePerCourse === undefined
+                ? 15
+                : Number(value.minutePerCourse);
         const groupSize = Number(value.groupSize);
 
         return (
@@ -113,6 +117,7 @@
             Number.isFinite(duration) &&
             duration >= 1 &&
             duration <= 6 &&
+            [15, 20, 25, 30].includes(minutePerCourse) &&
             Math.abs(duration * 2 - Math.round(duration * 2)) < 0.0001 &&
             [1, 2, 3].includes(groupSize) &&
             typeof value.earlyPlay === "boolean" &&
@@ -178,6 +183,10 @@
             showMaleMarks: settings.showMaleMarks !== false,
             showBeginnerMarks: settings.showBeginnerMarks !== false,
             groupSize: Number(settings.groupSize),
+            minutePerCourse:
+                settings.minutePerCourse === undefined
+                    ? 15
+                    : Number(settings.minutePerCourse),
         };
     }
 

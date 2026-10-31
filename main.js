@@ -38,6 +38,9 @@
         exportImageButton: document.getElementById("export-image-button"),
         showMaleMarks: document.getElementById("show-male-marks-input"),
         showBeginnerMarks: document.getElementById("show-beginner-marks-input"),
+        minutePerCourseOptions: document.getElementById(
+            "minute-per-course-options",
+        ),
     };
 
     let state = loadInitialState();
@@ -92,6 +95,7 @@
             settings: {
                 eventName: "",
                 duration: 3,
+                minutePerCourse: 15,
                 earlyPlay: true,
                 spreadMen: true,
                 spreadBeginners: true,
@@ -180,6 +184,10 @@
             "click",
             handleGroupSizeClick,
         );
+        elements.minutePerCourseOptions.addEventListener(
+            "click",
+            handleMinutePerCourseClick,
+        );
         elements.roster.addEventListener("input", handleRosterInput);
         elements.roster.addEventListener("change", handleRosterChange);
         elements.roster.addEventListener("focusout", handleRosterBlur);
@@ -220,6 +228,14 @@
                 items: [
                     "1 人 1 組：不特別綁定人員",
                     "2 & 3 人一組：系統會盡量綁定同小組的人 (有缺人時仍可能拆散)",
+                ],
+            },
+            {
+                title: "每場耗時：",
+                items: [
+                    "總場次會以【總時長】除以【每場耗時】，無條件進位 ",
+                    "例1：3小時，每場 20 min，共會分 9 場",
+                    "例2：3小時，每場 15 min，共會分 12 場",
                 ],
             },
             {
@@ -274,6 +290,15 @@
     function syncControls() {
         elements.duration.value = Number(state.settings.duration).toFixed(1);
         elements.eventName.value = state.settings.eventName;
+        elements.minutePerCourseOptions
+            .querySelectorAll("button")
+            .forEach((button) => {
+                const selected =
+                    Number(button.dataset.minutePerCourse) ===
+                    Number(state.settings.minutePerCourse);
+                button.classList.toggle("is-selected", selected);
+                button.setAttribute("aria-checked", String(selected));
+            });
         elements.earlyPlay.checked = state.settings.earlyPlay;
         elements.spreadMen.checked = state.settings.spreadMen;
         elements.spreadBeginners.checked = Boolean(
@@ -834,6 +859,15 @@
         result.rounds.forEach((round) => {
             const row = document.createElement("tr");
             row.className = "schedule-row";
+
+            if (
+                result.settings.earlyPlay &&
+                round.type === "placeholder" &&
+                round.number <= 3
+            ) {
+                row.classList.add("schedule-row-placeholder");
+            }
+
             row.dataset.round = String(round.number);
             const numberCell = document.createElement("td");
             numberCell.textContent = String(round.number);
@@ -1116,6 +1150,18 @@
         if (state.result) state.resultStale = true;
         updateResultAvailability();
         scheduleSave();
+    }
+
+    function handleMinutePerCourseClick(event) {
+        const button = event.target.closest("button[data-minute-per-course]");
+        if (!button) return;
+
+        const next = Number(button.dataset.minutePerCourse);
+        if (next === state.settings.minutePerCourse) return;
+
+        state.settings.minutePerCourse = next;
+        syncControls();
+        markResultStale();
     }
 
     function updateResultAvailability() {
