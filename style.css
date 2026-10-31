@@ -371,6 +371,7 @@ textarea:focus-visible {
 .segmented-control.minute-per-course-options {
     width: 100%;
     grid-template-columns: repeat(5, minmax(0, 1fr));
+    margin-top: 4px;
 }
 
 .segmented-control button {
